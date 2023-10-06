@@ -1,16 +1,37 @@
-# This is a sample Python script.
+from requests_html import HTMLSession
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+YELP_DOMAIN = 'https://www.yelp.com'
+UL_CONTAINER = 'list__09f24__ynIEd'
 
 
-# Press the green button in the gutter to run the script.
+def get_data():
+    session = HTMLSession()
+    r = session.get(f'{YELP_DOMAIN}/search?find_desc=Auto+Repair&find_loc=San+Francisco%2C+CA')
+    results = r.html.find(f'.{UL_CONTAINER}', first=True).find('li')
+    items = 0
+    for result in results:
+
+        sponsored_result = result.find('.toggle__09f24__aaito', first=True)
+
+        if sponsored_result:
+            items += 1
+            # span css-1egxyvc
+            a = sponsored_result.find('.css-1egxyvc', first=True).find('a', first=True)
+            print(YELP_DOMAIN + list(a.links)[0])
+            print(a.text)
+
+        special_offers_or_get_fast_response = result.find('.carouselContainer__09f24__OQMYU', first=True)
+        if special_offers_or_get_fast_response:
+            # TODO. Refactor (here we got not multiple results inside)
+            items += 1
+            # span css-nyjpex
+            a = special_offers_or_get_fast_response.find('.css-nyjpex', first=True).find('a', first=True)
+            print(YELP_DOMAIN + list(a.links)[0])
+            print(a.text)
+
+    f = open('test.txt', 'w')
+    f.write(r.html.html)
+    f.close()
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    get_data()
