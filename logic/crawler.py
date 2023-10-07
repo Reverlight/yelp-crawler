@@ -28,6 +28,7 @@ def get_business_links(session: BaseSession, category_name: str, location: str) 
 
     links_collected = []
     category_name = category_name.strip().replace(' ', '+')
+    location = location.strip().replace(' ', '+')
     link = f'{YELP_DOMAIN}/search?find_desc={category_name}&find_loc={location}%2C+CA'
     pagination = 0
 
